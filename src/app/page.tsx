@@ -1,8 +1,10 @@
+const {Button} = require("@/components/ui/button")
 export default function Home() {
   return (
-    <div className="text-4xl font-bold text-green-500">
-      <h1>Home</h1>
-    </div>
+    <Button className="bg-red-500">
+      hello
+    </Button>
+    
     
   )
 }
