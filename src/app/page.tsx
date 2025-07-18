@@ -46,9 +46,6 @@ export default function Home() {
     return(
       <div className="flex flex-col p-4 gap-y-4">
         <p>Logged in as {session.user.name}</p>
-        <p>Email: {session.user.email}</p>
-        <p>Id: {session.user.id}</p>
-        <p>Image: {session.user.image}</p>
         <Button onClick={() => authClient.signOut()}>Sign out</Button>
 
       </div>
