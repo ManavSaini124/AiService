@@ -2,9 +2,10 @@
 import {z} from "zod"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { OctagonAlert } from "lucide-react";
-import { useForm } from "react-hook-form"
-import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form" 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FaGithub, FaGoogle } from "react-icons/fa";
 
 import Link from "next/link";
 import {Input} from "@/components/ui/input"
@@ -57,10 +58,28 @@ export const SignUpView = () => {
             name: data.name,
             email: data.email,
             password: data.password, 
+            callbackURL:"/"
         },{
             onSuccess: () => {
                 setPending(false);
                 router.push("/");
+            },
+            onError: ({error}) => {
+                setError(error.message);
+            },
+        })    
+    }
+
+    const onSocial = (provider :"github" | "google") => {
+        setError(null);
+        setPending(true);
+    
+        authClient.signIn.social({
+            provider:provider,
+            callbackURL:"/"
+        },{
+            onSuccess: () => {
+                setPending(false);
             },
             onError: ({error}) => {
                 setError(error.message);
@@ -176,7 +195,7 @@ export const SignUpView = () => {
                                     </Alert>
                                 )}
                                 <Button disabled={pending} type="submit" className="w-full">
-                                    Sign In
+                                    Sign up
                                 </Button>
                                 <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after: items-center after:border-t">
                                     <span className="bg-card text-muted-foreground relative z-10 px-2">
@@ -187,19 +206,21 @@ export const SignUpView = () => {
                                     {/* dependends on number of social login cols-2 */}
                                     <Button
                                         disabled={pending}
+                                        onClick={()=>onSocial("google")}
                                         variant="outline"
                                         type="button"
                                         className="w-full"
                                     >
-                                        Google
+                                        <FaGoogle />
                                     </Button>
                                     <Button
                                         disabled={pending}
+                                        onClick={()=>onSocial("github")}
                                         variant="outline"
                                         type="button"
                                         className="w-full"
                                     >
-                                        Github 
+                                        <FaGithub /> 
                                     </Button>
                                 </div>
                                 <div className="text-center text-sm text-muted-foreground">
