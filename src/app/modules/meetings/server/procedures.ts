@@ -1,12 +1,44 @@
 import { db } from "@/db";
-import {  meetings } from "@/db/schema";
+import {  agents, meetings } from "@/db/schema";
 import { createTRPCRouter, baseProcedure, protectedProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import z from "zod";
-import { and, count, desc, eq, getTableColumns, ilike} from "drizzle-orm";
+import { and, count, desc, eq, getTableColumns, ilike , sql} from "drizzle-orm";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, MIN_PAGE_SIZE } from "@/constants";
+import { MeetingsInsertSchema, MeetingsUpdateSchema } from "../schemas";
 
 export const meetingsRouter = createTRPCRouter({
+    create: protectedProcedure
+            .input(MeetingsInsertSchema)
+            .mutation(async({input, ctx}) => {
+                const [createdMeeting] = await db
+                    .insert(meetings)
+                    .values({
+                        ...input, 
+                        userId: ctx.auth.user.id
+                    })
+                    .returning();
+                
+                    return createdMeeting
+            }),
+    
+    update: protectedProcedure
+            .input(MeetingsUpdateSchema)
+            .mutation(async ({ ctx, input})=>{
+                const [updatedMeeting] = await db
+                    .update(meetings)
+                    .set(input)
+                    .where(
+                        and(
+                            eq(meetings.id, input.id),
+                            eq(meetings.userId, ctx.auth.user.id)
+                        )
+                    )
+                    .returning()
+    
+                if(!updatedMeeting) throw new TRPCError({code: 'NOT_FOUND', message: 'Agent not found'});
+                return updatedMeeting;
+            }),
 
     getMany: protectedProcedure
         .input(z.object({
@@ -19,8 +51,12 @@ export const meetingsRouter = createTRPCRouter({
             const data = await db
                 .select({
                     ...getTableColumns(meetings),
-                })
+                    agent: agents,
+                    duration: sql<number>`EXTRACT(EPOCH FROM (ended_at - started_at))`.as("duration")
+
+                })  
                 .from(meetings)
+                .innerJoin(agents, eq(meetings.agentId, agents.id ))
                 .where(
                     and(
                         eq(meetings.userId, ctx.auth.user.id),
@@ -36,6 +72,7 @@ export const meetingsRouter = createTRPCRouter({
                     count: count()
                 })
                 .from(meetings)
+                .innerJoin(agents, eq(meetings.agentId, agents.id ))
                 .where(
                     and(
                         eq(meetings.userId, ctx.auth.user.id),
