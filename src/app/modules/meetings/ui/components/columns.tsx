@@ -17,18 +17,11 @@ import {
     LoaderIcon
 } from "lucide-react"
 
-import{ cn } from "@/lib/utils"
+import{ cn, formatDuration } from "@/lib/utils"
 
 import { Badge } from "@/components/ui/badge"
 
-function formatDuration(seconds: number) {
-    return humanizeDuration(seconds * 1000, {
-        round: true,
-        // spacer: " ",
-        units: [ "h", "m", "s"],
-        largest: 1,
-    })
-}
+
 
 const statusIconMap ={
     upcoming:ClockArrowUpIcon,
