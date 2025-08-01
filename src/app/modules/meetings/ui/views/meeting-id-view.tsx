@@ -35,11 +35,14 @@ export const MeetingIdView = ({ meetingId } : props )=>{
 
     const removeMeeting = useMutation(
         trpc.meetings.remove.mutationOptions({
-            onSuccess:()=>{
+            onSuccess:async()=>{
                 // Invalidate get many to force a refetch of the list of meetings after deletion
-                quearyClient.invalidateQueries(
+                await quearyClient.invalidateQueries(
                     trpc.meetings.getMany.queryOptions({})
                 )
+                await quearyClient.invalidateQueries(
+                    trpc.premium.getFreeUsage.queryOptions(),
+                );
                 // free tear walla bhi
                     router.push("/meetings")
             },

@@ -18,6 +18,7 @@ import{
     SidebarMenuItem
 } from "@/components/ui/sidebar"
 import { DashboardUserButton } from "./dashboard-user-button"
+import { DashboardTrial } from "./dashboard-trial";
 
 
 const firstSection =[
@@ -110,7 +111,11 @@ export const DashboardSidebar = () => {
                 </SidebarGroup>
             </SidebarContent>
             <SidebarFooter className="text-white">
-                <DashboardUserButton />
+                                
+                    <DashboardTrial />
+                    <DashboardUserButton />
+                
+
             </SidebarFooter>
         </Sidebar>
     )

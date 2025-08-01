@@ -274,7 +274,6 @@ export async function POST(req: NextRequest){
                     image: avatarUrl
                 }
             })
-            }
         } 
     }
 

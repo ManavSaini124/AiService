@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { agents } from "@/db/schema";
-import { createTRPCRouter, baseProcedure, protectedProcedure } from "@/trpc/init";
+import { createTRPCRouter, baseProcedure, protectedProcedure, premiumProcedure } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
 import { agentInsertSchema, agentsUpdateSchema } from "../schemas";
 import z from "zod";
@@ -106,7 +106,7 @@ export const agentRouter = createTRPCRouter({
         if(!existingAgent) throw new TRPCError({code: 'NOT_FOUND', message: 'Agent not found'});
         return existingAgent;
     }),
-    create: protectedProcedure
+    create: premiumProcedure("agents")
         .input(agentInsertSchema)
         .mutation(async({input, ctx}) => {
             const [createdAgent] = await db
