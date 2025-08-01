@@ -1,8 +1,8 @@
 
-const {SignInView} = require("@/app/modules/auth/ui/views/sign-in-view")
-const {auth} = require("@/lib/auth")
-const {headers} = require("next/headers")
-const {redirect} = require("next/navigation")
+import {SignInView} from "@/app/modules/auth/ui/views/sign-in-view"
+import {auth} from "@/lib/auth"
+import {headers} from "next/headers"
+import {redirect} from "next/navigation"
 
 const page = async() => {
     const session = await auth.api.getSession({
